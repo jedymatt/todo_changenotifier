@@ -4,12 +4,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_changenotifier/models/todo.dart';
 import 'package:todo_changenotifier/repository/todos_repository.dart';
 
-class LocalStorage extends TodosRepository {
+class LocalStorageRepository extends TodosRepository {
   final String rootKey;
   final String todosKey = 'todos';
   final JsonCodec codec = json;
 
-  LocalStorage({
+  LocalStorageRepository({
     required this.rootKey,
   });
 
