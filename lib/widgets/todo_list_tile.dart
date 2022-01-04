@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:todo_changenotifier/models/todo.dart';
-import 'package:todo_changenotifier/providers/todo_provider.dart';
 import 'package:todo_changenotifier/screens/edit_todo_screen.dart';
 
 class TodoListTile extends StatefulWidget {
-  final String todoId;
+  // final String todoId;
+  final Todo todo;
+  final VoidCallback onDismissed;
+  final Function(bool isComplete) onChanged;
   const TodoListTile({
     Key? key,
-    required this.todoId,
+    required this.todo,
+    required this.onDismissed,
+    required this.onChanged,
   }) : super(key: key);
 
   @override
@@ -18,34 +21,42 @@ class TodoListTile extends StatefulWidget {
 class _TodoListTileState extends State<TodoListTile> {
   @override
   Widget build(BuildContext context) {
-    return Selector<TodoProvider, Todo>(
-      selector: (p0, p1) => p1.todoById(widget.todoId),
-      builder: (context, todo, child) {
-        return ListTile(
-          key: ValueKey(todo),
-          title: Text(todo.title),
-          leading: Checkbox(
-            value: todo.isComplete,
-            onChanged: (value) {
-              context.read<TodoProvider>().updateTodo(
-                    todo.copyWith(
-                      isComplete: value!,
-                    ),
-                  );
-            },
-          ),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => EditTodoScreen(
-                  todo: todo,
-                ),
+    return Dismissible(
+      key: widget.key ?? Key(widget.todo.id!),
+      background: Container(
+        color: Colors.red,
+      ),
+      onDismissed: (direction) => widget.onDismissed(),
+      child: ListTile(
+        title: Text(
+          widget.todo.title,
+          overflow: TextOverflow.ellipsis,
+        ),
+        subtitle: widget.todo.description.isNotEmpty
+            ? Text(
+                widget.todo.description,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              )
+            : null,
+        leading: Checkbox(
+          shape: const CircleBorder(),
+          value: widget.todo.isComplete,
+          checkColor: Colors.blue,
+          activeColor: Colors.transparent,
+          onChanged: (value) => widget.onChanged(value!),
+        ),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => EditTodoScreen(
+                todo: widget.todo,
               ),
-            );
-          },
-        );
-      },
+            ),
+          );
+        },
+      ),
     );
   }
 }

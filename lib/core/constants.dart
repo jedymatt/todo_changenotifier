@@ -1,3 +1,3 @@
 import 'package:uuid/uuid.dart';
 
-const uuid = Uuid();
+const kUuid = Uuid();
